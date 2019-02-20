@@ -7,8 +7,12 @@ module Fluent::Plugin
 
     DEFAULT_BUFFER_TYPE = "memory"
 
-    config_param :connection_string, :string
-    config_param :hub_name, :string
+    config_param :connection_string, :string, :default => ''
+    config_param :hub_name, :string, :default => ''
+    config_param :uri, :string, :default => ''
+    config_param :secure_access_signature, :string, :default => ''
+    config_param :sas_expiration, :integer, :default => 0
+    config_param :secure_access_policy_name, :string, :default => ''
     config_param :include_tag, :bool, :default => false
     config_param :include_time, :bool, :default => false
     config_param :tag_time_name, :string, :default => 'time'
@@ -36,7 +40,7 @@ module Fluent::Plugin
         raise NotImplementedError
       else
         require_relative 'azureeventhubs/http'
-        @sender = AzureEventHubsHttpSender.new(@connection_string, @hub_name, @expiry_interval,@proxy_addr,@proxy_port,@open_timeout,@read_timeout)
+        @sender = AzureEventHubsHttpSender.new(@connection_string, @hub_name, @uri, @secure_access_signature, @sas_expiration, @secure_access_policy_name, @expiry_interval,@proxy_addr,@proxy_port,@open_timeout,@read_timeout)
       end
       raise Fluent::ConfigError, "'tag' in chunk_keys is required." if not @chunk_key_tag
     end
